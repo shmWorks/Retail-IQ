@@ -29,3 +29,19 @@ The Retail Forecasting System is a machine learning-based web application that p
 ```bash
 git clone https://github.com/aayeshh/Retail-IQ
 cd Retail-Forecasting-System
+```
+
+### 2. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Run the Application
+```bash
+python run.py
+```
+
+### 4. Open in Browser
+```bash
+http://127.0.0.1:5000/
+```
