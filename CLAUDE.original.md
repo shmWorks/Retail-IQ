@@ -1,10 +1,10 @@
 # CLAUDE.md
 
-Claude Code guidance for this repo.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project Overview
 
-Retail-IQ = ML sales forecasting for retail time-series. XGBoost on Favorita store sales data.
+Retail-IQ is a machine learning sales forecasting system for retail time-series data. Uses XGBoost for prediction on Favorita store sales data.
 
 ## Setup Commands
 
@@ -30,13 +30,13 @@ src/retail_iq/           # Core Python package
 └── visualization.py       # Plotting utilities (decomposition, heatmaps, distributions)
 ```
 
-**Key principle**: Notebooks (`notebooks/eda.ipynb`) = clean drivers only. All logic in `src/retail_iq/`.
+**Key principle**: Notebooks (`notebooks/eda.ipynb`) are clean drivers only. All logic lives in `src/retail_iq/`.
 
 ## Core Modules
 
 ### config.py
 
-Path constants via Pathlib. **Always use for I/O** — never hardcode.
+Path constants using Pathlib. **Always use these for I/O** — never hardcode paths.
 
 - `PROJECT_ROOT`, `DATA_DIR`, `RAW_DATA_DIR`, `PROCESSED_DATA_DIR`
 - `OUTPUT_DIR`, `PLOT_DIR`, `MODEL_DIR`, `LOG_DIR`
@@ -45,7 +45,7 @@ Path constants via Pathlib. **Always use for I/O** — never hardcode.
 
 - `load_raw_data()` — loads train, test, stores, oil, holidays, transactions CSVs
 - `merge_datasets(train, stores, oil, holidays, transactions)` — joins all sources
-- `detect_outliers_iqr(df)` — IQR outlier flag by store/family
+- `detect_outliers_iqr(df)` — IQR-based outlier flagging by store/family
 
 ### features.py: FastFeatureEngineer
 
@@ -60,7 +60,7 @@ fe.add_macroeconomic_features()
 df = fe.transform()
 ```
 
-Methods: `add_temporal_features()`, `add_lag_and_rolling()`, `add_onpromotion_features()`, `add_macroeconomic_features()`, `add_transaction_features()`, `add_store_metadata()`, `add_cannibalization_features()`
+Available methods: `add_temporal_features()`, `add_lag_and_rolling()`, `add_onpromotion_features()`, `add_macroeconomic_features()`, `add_transaction_features()`, `add_store_metadata()`, `add_cannibalization_features()`
 
 ### visualization.py
 
@@ -72,14 +72,14 @@ Methods: `add_temporal_features()`, `add_lag_and_rolling()`, `add_onpromotion_fe
 
 - `data/raw/` — original CSVs (gitignored)
 - `data/processed/` — cleaned/featured datasets (gitignored)
-- `outputs/plots/`, `outputs/models/`, `outputs/logs/` — artifacts (gitignored)
+- `outputs/plots/`, `outputs/models/`, `outputs/logs/` — generated artifacts (gitignored)
 
 ## Development Rules
 
 1. **PATH_STRICT**: Use `config.py` constants for all file I/O
-2. **MODULAR_ML**: Logic in `src/retail_iq/`, not notebooks
+2. **MODULAR_ML**: Keep logic in `src/retail_iq/`, not notebooks
 3. **NO_FLUFF**: Dense reasoning, no conversational filler
-4. Sync `requirements.txt` and `pyproject.toml` before installing deps
+4. Sync `requirements.txt` and `pyproject.toml` before installing dependencies
 
 ## Tech Stack
 
