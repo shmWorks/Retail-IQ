@@ -10,74 +10,74 @@
 
 ### 1.1 Problem Statement
 
-Retail chains managing thousands of SKUs face a dual failure mode: overstocking generates capital inefficiency and spoilage risk (particularly in perishable categories), while understocking causes revenue leakage and customer churn. Existing demand planning tools apply univariate time-series models per SKU and ignore three critical dynamics:
+Retail chains managing thousands of SKUs face dual failure mode: overstocking generates capital inefficiency and spoilage risk (perishable categories), understocking causes revenue leakage and customer churn. Existing demand planning tools apply univariate time-series models per SKU, ignore three critical dynamics:
 
-1. **Promotional lift** — transient demand spikes caused by discounts, bundles, or end-cap placements.
-2. **Cannibalization** — one product's promotion suppresses adjacent SKU demand within the same category.
-3. **Cross-SKU interaction** — correlated demand patterns across product lines driven by seasonality, consumer habits, or complementarity.
+1. **Promotional lift** — transient demand spikes from discounts, bundles, end-cap placements.
+2. **Cannibalization** — one product's promotion suppresses adjacent SKU demand within same category.
+3. **Cross-SKU interaction** — correlated demand patterns across product lines driven by seasonality, consumer habits, complementarity.
 
-This project builds a **multi-family retail demand forecasting system** using data from Corporación orFavita (Ecuador's largest grocery chain) that produces accurate daily sales predictions while quantifying promotional impact and identifying cannibalization pairs across 33 product families and 54 stores.
+Project builds **multi-family retail demand forecasting system** using Corporación Favorita data (Ecuador's largest grocery chain). Produces accurate daily sales predictions, quantifies promotional impact, identifies cannibalization pairs across 33 product families, 54 stores.
 
 ---
 
 ### 1.2 ML Problem Type
 
-| Dimension           | Specification                                                                   |
-| ------------------- | ------------------------------------------------------------------------------- |
-| **Primary task**    | Supervised regression (continuous sales volume prediction)                      |
-| **Secondary task**  | Unsupervised clustering (cannibalization group detection)                       |
+| Dimension | Specification |
+|-----------|---------------|
+| **Primary task** | Supervised regression (continuous sales volume prediction) |
+| **Secondary task** | Unsupervised clustering (cannibalization group detection) |
 | **Problem subtype** | Multi-step time-series forecasting (16-day-ahead horizon, per competition spec) |
-| **Scope**           | Multi-family, multi-store panel regression (54 stores × 33 product families)    |
+| **Scope** | Multi-family, multi-store panel regression (54 stores × 33 product families) |
 
 ---
 
 ### 1.3 Target Variable
 
-- **`sales`** — total unit sales for a product family at a specific store on a given date. Fractional values are valid (e.g., 1.5 kg of cheese).
+- **`sales`** — total unit sales for product family at specific store on given date. Fractional values valid (e.g., 1.5 kg cheese).
 - One row = one `(store_nbr, family, date)` triple.
-- Prediction horizon: **16 days ahead** (Aug 16–31, 2017), matching the competition test window. For academic purposes, this is treated as a hold-out evaluation period.
+- Prediction horizon: **16 days ahead** (Aug 16–31, 2017), matching competition test window. Academic hold-out evaluation period.
 
 ---
 
 ### 1.4 Input Features (Expected)
 
-| Feature Category                             | Specific Features (Favorita columns)                                                                                  |
-| -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| **Temporal**                                 | `day_of_week`, `day_of_month`, `week_of_year`, `month`, `quarter`, `year`, `is_weekend`                               |
+| Feature Category | Specific Features (Favorita columns) |
+|------------------|--------------------------------------|
+| **Temporal** | `day_of_week`, `day_of_month`, `week_of_year`, `month`, `quarter`, `year`, `is_weekend` |
 | **Holiday features** (`holidays_events.csv`) | `is_national_holiday`, `is_regional_holiday`, `is_local_holiday`, `holiday_type`, `days_to_holiday`, `is_transferred` |
-| **Lag features**                             | `sales_lag_1d`, `sales_lag_7d`, `sales_lag_14d`, `sales_lag_365d`                                                     |
-| **Rolling statistics**                       | `rolling_mean_7d`, `rolling_mean_14d`, `rolling_mean_28d`, `rolling_std_7d`                                           |
-| **Promotional**                              | `onpromotion` (count of items on promotion per family/store/day)                                                      |
-| **Store metadata** (`stores.csv`)            | `store_type` (A–E), `store_cluster` (1–17), `city`, `state`                                                           |
-| **Macroeconomic** (`oil.csv`)                | `dcoilwtico` (daily WTI crude oil price — direct economic driver for Ecuador)                                         |
-| **Transaction volume** (`transactions.csv`)  | `transactions` (daily store-level foot traffic — leading indicator of sales)                                          |
-| **Cross-family (cannibalization)**           | `family_avg_onpromotion`, `competitor_family_sales_lag_1d` (top-3 correlated families per store)                      |
+| **Lag features** | `sales_lag_1d`, `sales_lag_7d`, `sales_lag_14d`, `sales_lag_365d` |
+| **Rolling statistics** | `rolling_mean_7d`, `rolling_mean_14d`, `rolling_mean_28d`, `rolling_std_7d` |
+| **Promotional** | `onpromotion` (count of items on promotion per family/store/day) |
+| **Store metadata** (`stores.csv`) | `store_type` (A–E), `store_cluster` (1–17), `city`, `state` |
+| **Macroeconomic** (`oil.csv`) | `dcoilwtico` (daily WTI crude oil price — direct economic driver for Ecuador) |
+| **Transaction volume** (`transactions.csv`) | `transactions` (daily store-level foot traffic — leading indicator of sales) |
+| **Cross-family (cannibalization)** | `family_avg_onpromotion`, `competitor_family_sales_lag_1d` (top-3 correlated families per store) |
 
 ---
 
 ### 1.5 Assumptions
 
-1. **Dataset**: The **Corporación Favorita Grocery Sales Forecasting** dataset (Kaggle competition: `store-sales-time-series-forecasting`) is used. It contains 54 stores, 33 product families, and daily sales from **January 1, 2013 to August 31, 2017** (~3 million rows). Six CSV files are provided: `train.csv`, `test.csv`, `stores.csv`, `oil.csv`, `holidays_events.csv`, `transactions.csv`.
-2. **Granularity**: Forecasting is performed at the `(store_nbr, family, date)` level (daily). Where "SKU" is referenced in the proposal, it is interpreted as a `(store, product_family)` pair.
-3. **Cannibalization proxy**: True basket-level cannibalization cannot be computed from this dataset. Cross-elasticity between product families will be estimated using lagged residual sales of correlated families during `onpromotion > 0` periods as a proxy.
-4. **Oil price imputation**: `dcoilwtico` has ~44 missing values (weekends/holidays). Strategy: forward-fill, then backward-fill. Oil price is a documented economic driver for Ecuador and must be included.
-5. **Evaluation period**: The official competition test period is Aug 16–31, 2017 (16 days). For academic grading, this same window is used as the hold-out test set. Training uses all data before Aug 16, 2017.
-6. **From-scratch gradient descent**: A Linear Regression with Gradient Descent (GD) is implemented manually (NumPy only) as a baseline interpretability model, satisfying the proposal deliverable requirement.
+1. **Dataset**: Corporación Favorita Grocery Sales Forecasting dataset (Kaggle: `store-sales-time-series-forecasting`). Contains 54 stores, 33 product families, daily sales **January 1, 2013 to August 31, 2017** (~3 million rows). Six CSV files: `train.csv`, `test.csv`, `stores.csv`, `oil.csv`, `holidays_events.csv`, `transactions.csv`.
+2. **Granularity**: Forecasting at `(store_nbr, family, date)` level (daily). "SKU" referenced = `(store, product_family)` pair.
+3. **Cannibalization proxy**: True basket-level cannibalization unavailable from dataset. Cross-elasticity between product families estimated using lagged residual sales of correlated families during `onpromotion > 0` periods.
+4. **Oil price imputation**: `dcoilwtico` has ~44 missing values (weekends/holidays). Strategy: forward-fill, then backward-fill. Oil price documented economic driver for Ecuador, must be included.
+5. **Evaluation period**: Official competition test period Aug 16–31, 2017 (16 days). Academic grading uses same window as hold-out test set. Training uses all data before Aug 16, 2017.
+6. **From-scratch gradient descent**: Linear Regression with Gradient Descent (GD) implemented manually (NumPy only) as baseline interpretability model, satisfies proposal deliverable requirement.
 
 ---
 
 ### 1.6 Success Metrics
 
-| Metric                                    | Primary Use                                | Target Threshold |
-| ----------------------------------------- | ------------------------------------------ | ---------------- |
-| **RMSLE** (Root Mean Squared Log Error)   | **Official competition metric** — primary  | < 0.45           |
-| **RMSE** (Root Mean Squared Error)        | Raw-scale interpretability                 | Minimize         |
-| **MAPE** (Mean Absolute Percentage Error) | Scale-invariant comparison across families | < 15%            |
-| **R²**                                    | Variance explained                         | > 0.80           |
+| Metric | Primary Use | Target Threshold |
+|--------|-------------|------------------|
+| **RMSLE** (Root Mean Squared Log Error) | **Official competition metric** — primary | < 0.45 |
+| **RMSE** (Root Mean Squared Error) | Raw-scale interpretability | Minimize |
+| **MAPE** (Mean Absolute Percentage Error) | Scale-invariant comparison across families | < 15% |
+| **R²** | Variance explained | > 0.80 |
 
-> **Why RMSLE?** The target `sales` is right-skewed and includes zero values. RMSLE penalizes under-prediction more than over-prediction, which is appropriate for retail (stockout cost > overstock cost). Compute as: `RMSLE = sqrt(mean((log1p(y_pred) - log1p(y_true))^2))`.
+> **Why RMSLE?** Target `sales` right-skewed, includes zero values. RMSLE penalizes under-prediction more than over-prediction, appropriate for retail (stockout cost > overstock cost). Compute: `RMSLE = sqrt(mean((log1p(y_pred) - log1p(y_true))^2))`.
 
-> **Cannibalization sub-metric**: Pearson cross-correlation coefficient between `onpromotion`-activated family residual sales and adjacent family residual sales. A negative correlation (< −0.3) during promotion windows is considered evidence of cannibalization.
+> **Cannibalization sub-metric**: Pearson cross-correlation coefficient between `onpromotion`-activated family residual sales and adjacent family residual sales. Negative correlation (< −0.3) during promotion windows = cannibalization evidence.
 
 ---
 
@@ -89,42 +89,42 @@ This project builds a **multi-family retail demand forecasting system** using da
 
 ### FR-01: Data Ingestion and Validation Module
 
-**Description:**  
-The system must load all six Favorita CSV files (`train.csv`, `test.csv`, `stores.csv`, `oil.csv`, `holidays_events.csv`, `transactions.csv`), merge them on appropriate keys (`store_nbr` + `date`), and perform automated schema validation: column existence checks, data type verification, range checks (e.g., `sales` must be ≥ 0), and null-count reporting per column.
+**Description:**
+System loads all six Favorita CSV files (`train.csv`, `test.csv`, `stores.csv`, `oil.csv`, `holidays_events.csv`, `transactions.csv`), merges on keys (`store_nbr` + `date`), performs automated schema validation: column existence checks, data type verification, range checks (e.g., `sales` ≥ 0), null-count reporting per column.
 
-**Why it is necessary:**  
-Without a validated, merged base dataset no downstream processing is possible. The Favorita dataset requires multi-table joins across 6 files with different key structures — a join error silently corrupts features like `dcoilwtico` or `transactions` for entire stores.
+**Why necessary:**
+Without validated, merged base dataset no downstream processing possible. Favorita dataset requires multi-table joins across 6 files with different key structures — join error silently corrupts features like `dcoilwtico` or `transactions` for entire stores.
 
 **Measurable Acceptance Criteria:**
 
-- All six source files are successfully merged into a single panel DataFrame; merge diagnostics (left-join null counts) are printed.
-- A validation report is auto-generated listing: shape, dtypes, null counts per column, and any `sales < 0` violations.
-- The merged DataFrame contains exactly `54 stores × 33 families × training_days` rows (minus any missing combinations); discrepancy is flagged.
-- Execution time does not exceed 60 seconds on a standard laptop (dataset is ~3M rows).
+- All six source files merged into single panel DataFrame; merge diagnostics (left-join null counts) printed.
+- Validation report auto-generated listing: shape, dtypes, null counts per column, `sales < 0` violations.
+- Merged DataFrame contains exactly `54 stores × 33 families × training_days` rows (minus missing combinations); discrepancy flagged.
+- Execution time ≤ 60 seconds on standard laptop (dataset ~3M rows).
 
 ---
 
 ### FR-02: Data Preprocessing Pipeline
 
-**Description:**  
-The pipeline must handle: (a) forward-fill imputation of missing `dcoilwtico` values (weekends/public holidays have no oil price recorded), (b) classification of holidays in `holidays_events.csv` — distinguish `transferred=True` holidays (treat as workday) from active holidays, (c) outlier detection using IQR per `(store_nbr, family)` group, and (d) temporal ordering of all records by `(store_nbr, family, date)`.
+**Description:**
+Pipeline handles: (a) forward-fill imputation of missing `dcoilwtico` values (weekends/public holidays no oil price recorded), (b) classification of holidays in `holidays_events.csv` — distinguish `transferred=True` holidays (treat as workday) from active holidays, (c) outlier detection using IQR per `(store_nbr, family)` group, (d) temporal ordering of all records by `(store_nbr, family, date)`.
 
-**Why it is necessary:**  
-The Favorita `oil.csv` has ~44 missing rows (no trading on weekends). `holidays_events.csv` contains `transferred=True` rows that mark days officially designated as holidays but observed on a different date — treating these as holidays introduces incorrect feature values. Unhandled missing oil prices will propagate NaN through all downstream features.
+**Why necessary:**
+Favorita `oil.csv` has ~44 missing rows (no trading weekends). `holidays_events.csv` contains `transferred=True` rows marking days officially designated holidays but observed different date — treating these as holidays introduces incorrect feature values. Unhandled missing oil prices propagate NaN through downstream features.
 
 **Measurable Acceptance Criteria:**
 
-- After preprocessing, `dcoilwtico` has 0% null values; imputation method is documented.
-- Transferred holidays are correctly excluded from the `is_holiday` flag (Boolean logic verified on ≥ 2 known transfer dates).
-- All records are sorted chronologically within each `(store_nbr, family)` group.
-- The final preprocessed DataFrame has a reproducible row count logged to file.
+- After preprocessing, `dcoilwtico` has 0% null values; imputation method documented.
+- Transferred holidays correctly excluded from `is_holiday` flag (Boolean logic verified on ≥ 2 known transfer dates).
+- All records sorted chronologically within each `(store_nbr, family)` group.
+- Final preprocessed DataFrame has reproducible row count logged to file.
 
 ---
 
 ### FR-03: Feature Engineering Module
 
-**Description:**  
-Construct the following feature groups programmatically:
+**Description:**
+Construct following feature groups programmatically:
 
 1. **Temporal features**: `day_of_week`, `day_of_month`, `week_of_year`, `month`, `quarter`, `year`, `is_weekend`.
 2. **Holiday features**: `is_national_holiday`, `is_regional_holiday`, `is_local_holiday`, `holiday_type` (encoded), `days_to_nearest_holiday`, `is_transferred` (binary).
@@ -134,41 +134,41 @@ Construct the following feature groups programmatically:
 6. **Macroeconomic**: `dcoilwtico` (oil price), `dcoilwtico_lag_7d`, `dcoilwtico_rolling_28d`.
 7. **Transaction volume**: `transactions` (from `transactions.csv`), `transactions_lag_7d`.
 8. **Store metadata**: `store_type` (label-encoded A–E), `store_cluster` (1–17), `city`, `state` (target-encoded by mean sales).
-9. **Cannibalization proxy features**: For each `(store, family, date)`, add the lagged mean sales of the top-3 most correlated other families in the same store.
+9. **Cannibalization proxy features**: For each `(store, family, date)`, add lagged mean sales of top-3 most correlated other families in same store.
 
-**Why it is necessary:**  
-Raw temporal data provides no signal to tree-based models (which cannot extrapolate). Lag and rolling features encode the autoregressive dynamics essential for time-series forecasting. Without these, models degrade to simple cross-sectional regressors.
+**Why necessary:**
+Raw temporal data provides no signal to tree-based models (cannot extrapolate). Lag and rolling features encode autoregressive dynamics essential for time-series forecasting. Without these, models degrade to simple cross-sectional regressors.
 
 **Measurable Acceptance Criteria:**
 
-- All 9 feature groups are present in the final feature matrix.
-- Lag features contain NaN only for the first `k` rows per group (where `k` = lag period); these rows are dropped before model training.
-- Feature engineering is implemented as a reusable Python class/function accepting a DataFrame and returning an augmented DataFrame.
-- Unit test: confirm `sales_lag_7d` of a constructed test series equals the known ground truth.
+- All 9 feature groups present in final feature matrix.
+- Lag features contain NaN only for first `k` rows per group (where `k` = lag period); these rows dropped before model training.
+- Feature engineering implemented as reusable Python class/function accepting DataFrame, returning augmented DataFrame.
+- Unit test: confirm `sales_lag_7d` of constructed test series equals known ground truth.
 
 ---
 
 ### FR-04: Exploratory Data Analysis (EDA) Module
 
-**Description:**  
-The EDA module must produce the following documented outputs: (a) time-series decomposition plots (trend, seasonality, residual) for at least 3 `(store_nbr, family)` combinations using `statsmodels.seasonal_decompose`, (b) a correlation heatmap of numerical features, (c) distribution plots for `sales` and `onpromotion`, (d) holiday lift analysis — bar chart comparing mean sales across national, regional, local, and non-holiday days, (e) oil price vs. aggregate sales scatter plot over time, and (f) cross-family correlation matrix to identify cannibalization candidate pairs.
+**Description:**
+EDA module produces following documented outputs: (a) time-series decomposition plots (trend, seasonality, residual) for ≥ 3 `(store_nbr, family)` combinations using `statsmodels.seasonal_decompose`, (b) correlation heatmap of numerical features, (c) distribution plots for `sales` and `onpromotion`, (d) holiday lift analysis — bar chart comparing mean sales across national, regional, local, and non-holiday days, (e) oil price vs. aggregate sales scatter plot over time, (f) cross-family correlation matrix to identify cannibalization candidate pairs.
 
-**Why it is necessary:**  
-EDA is the primary mechanism for validating assumptions about the data. Without it, feature engineering decisions (e.g., lag window size, seasonal period) are arbitrary and undefended in academic evaluation.
+**Why necessary:**
+EDA primary mechanism for validating assumptions about data. Without it, feature engineering decisions (e.g., lag window size, seasonal period) arbitrary, undefended in academic evaluation.
 
 **Measurable Acceptance Criteria:**
 
 - Minimum 10 publication-quality figures saved to `/outputs/eda/` directory.
-- Each figure has titles, axis labels, and source annotations.
-- EDA notebook/script outputs at least 3 documented insights (written as markdown cells) that directly inform feature engineering or modeling decisions.
-- Time-series decomposition uses `period=365` (daily data, annual seasonality) and this is explicitly documented.
+- Each figure has titles, axis labels, source annotations.
+- EDA notebook/script outputs ≥ 3 documented insights (written as markdown cells) directly informing feature engineering or modeling decisions.
+- Time-series decomposition uses `period=365` (daily data, annual seasonality), explicitly documented.
 
 ---
 
 ### FR-05: Model Training Pipeline (Baseline + Advanced)
 
-**Description:**  
-Implement and train the following models in sequence:
+**Description:**
+Implement and train following models in sequence:
 
 1. **Baseline 1**: Seasonal Naive (persistence model — predict last year's same-week value).
 2. **Baseline 2**: Linear Regression with Gradient Descent (implemented from scratch using NumPy; no `sklearn.LinearRegression`).
@@ -176,93 +176,93 @@ Implement and train the following models in sequence:
 4. **Advanced 2**: LightGBM Regressor.
 5. _(Optional)_ **Advanced 3**: Prophet (Facebook), if time permits.
 
-All models must use **temporal train/test split**: training on data from Jan 1, 2013 to Aug 15, 2017; test set is Aug 16–31, 2017 (the official 16-day competition window). No random shuffling of time-series data.
+All models use **temporal train/test split**: training on data Jan 1, 2013 to Aug 15, 2017; test set Aug 16–31, 2017 (official 16-day competition window). No random shuffling of time-series data.
 
-**Why it is necessary:**  
-A baseline model is required to establish a performance floor. Without it, advanced model improvements cannot be quantified or defended. The from-scratch GD implementation satisfies the stated project deliverable requirement.
+**Why necessary:**
+Baseline model required to establish performance floor. Without it, advanced model improvements cannot be quantified or defended. From-scratch GD implementation satisfies stated project deliverable requirement.
 
 **Measurable Acceptance Criteria:**
 
-- All models produce predictions on the held-out 16-day test set.
-- Training and inference times are logged per model.
-- The from-scratch GD implementation converges (loss decreases monotonically or plateaus) within 1000 iterations; convergence curve is plotted.
-- Zero data leakage: confirmed via a documented check that no test-set dates (Aug 16–31, 2017) appear in any training feature window.
+- All models produce predictions on held-out 16-day test set.
+- Training and inference times logged per model.
+- From-scratch GD implementation converges (loss decreases monotonically or plateaus) within 1000 iterations; convergence curve plotted.
+- Zero data leakage: documented check confirming no test-set dates (Aug 16–31, 2017) appear in any training feature window.
 
 ---
 
 ### FR-06: Hyperparameter Tuning Module
 
-**Description:**  
-Tune XGBoost and LightGBM using one of the following strategies: (a) `GridSearchCV` with `TimeSeriesSplit` (5 folds), or (b) Bayesian optimization using `Optuna`. The following hyperparameters must be included in the search space:
+**Description:**
+Tune XGBoost and LightGBM using one of: (a) `GridSearchCV` with `TimeSeriesSplit` (5 folds), or (b) Bayesian optimization using `Optuna`. Following hyperparameters must be included in search space:
 
 - XGBoost: `n_estimators`, `max_depth`, `learning_rate`, `subsample`, `colsample_bytree`.
 - LightGBM: `num_leaves`, `max_depth`, `learning_rate`, `min_child_samples`, `feature_fraction`.
 
-**Why it is necessary:**  
-Default hyperparameters result in suboptimal models. More critically, using standard `KFold` cross-validation on time-series data causes data leakage (future data is used to predict past). `TimeSeriesSplit` enforces temporal ordering.
+**Why necessary:**
+Default hyperparameters result in suboptimal models. More critically, standard `KFold` cross-validation on time-series data causes data leakage (future data used to predict past). `TimeSeriesSplit` enforces temporal ordering.
 
 **Measurable Acceptance Criteria:**
 
-- Tuning uses `TimeSeriesSplit` with `n_splits ≥ 3`; this is explicitly configured and logged.
-- Best hyperparameters are saved to a JSON file (e.g., `best_params_xgb.json`).
-- Post-tuning RMSE improves by ≥ 3% relative to pre-tuning RMSE on the validation fold (or the result and explanation are explicitly documented if improvement is marginal).
-- Total tuning wall-clock time is logged.
+- Tuning uses `TimeSeriesSplit` with `n_splits ≥ 3`; explicitly configured and logged.
+- Best hyperparameters saved to JSON file (e.g., `best_params_xgb.json`).
+- Post-tuning RMSE improves by ≥ 3% relative to pre-tuning RMSE on validation fold (or result and explanation explicitly documented if improvement marginal).
+- Total tuning wall-clock time logged.
 
 ---
 
 ### FR-07: Model Evaluation Framework
 
-**Description:**  
-A centralized evaluation module must compute the following for every trained model: RMSE, MAPE, R², and MAE on the held-out test set. Additionally: (a) plot actual vs. predicted sales for the top-5 store-department combinations by sales volume, (b) compute residual plots and check for systematic bias (mean residual significantly ≠ 0 indicates model misspecification), and (c) perform SHAP value analysis on the best-performing tree model to identify the top-10 most important features.
+**Description:**
+Centralized evaluation module computes following for every trained model: RMSE, MAPE, R², and MAE on held-out test set. Additionally: (a) plot actual vs. predicted sales for top-5 store-department combinations by sales volume, (b) compute residual plots and check for systematic bias (mean residual significantly ≠ 0 indicates model misspecification), (c) perform SHAP value analysis on best-performing tree model to identify top-10 most important features.
 
-**Why it is necessary:**  
-A single metric is insufficient for model assessment. Residual analysis detects heteroscedasticity and structural bias. SHAP analysis provides feature importances that are consistent (unlike built-in tree importance) and are required for the cannibalization and promotion-effect interpretation deliverables.
+**Why necessary:**
+Single metric insufficient for model assessment. Residual analysis detects heteroscedasticity and structural bias. SHAP analysis provides feature importances consistent (unlike built-in tree importance), required for cannibalization and promotion-effect interpretation deliverables.
 
 **Measurable Acceptance Criteria:**
 
-- All 4 metrics are reported in a comparative table (model vs. metric).
-- Actual vs. predicted plots are generated for ≥ 5 store-dept series.
-- SHAP summary plot identifies at least 1 promotional feature and 1 temporal feature in the top-5.
-- Residual mean is reported per model; if `|mean residual| > 5% of mean actual sales`, a bias explanation is documented.
+- All 4 metrics reported in comparative table (model vs. metric).
+- Actual vs. predicted plots generated for ≥ 5 store-dept series.
+- SHAP summary plot identifies ≥ 1 promotional feature and 1 temporal feature in top-5.
+- Residual mean reported per model; if `|mean residual| > 5%` of mean actual sales, bias explanation documented.
 
 ---
 
 ### FR-08: Cannibalization & Promotional Impact Analysis Module
 
-**Description:**  
+**Description:**
 This module must:
 
-1. Compute a **cross-department correlation matrix** on residual sales (sales net of trend and seasonality), targeting periods with active markdowns.
-2. Identify **cannibalization candidate pairs** using a threshold of Pearson r < −0.35 during promotional periods.
-3. Quantify **promotional lift** for each markdown event: `lift = (actual_sales - counterfactual_baseline) / counterfactual_baseline`, where counterfactual baseline is the rolling 4-week pre-promo average.
-4. Produce a scatter plot of markdown amount vs. promotional lift per department.
+1. Compute **cross-department correlation matrix** on residual sales (sales net of trend and seasonality), targeting periods with active markdowns.
+2. Identify **cannibalization candidate pairs** using threshold of Pearson r < −0.35 during promotional periods.
+3. Quantify **promotional lift** for each markdown event: `lift = (actual_sales - counterfactual_baseline) / counterfactual_baseline`, where counterfactual baseline = rolling 4-week pre-promo average.
+4. Produce scatter plot of markdown amount vs. promotional lift per department.
 
-**Why it is necessary:**  
-This is the highest-differentiation deliverable in the proposal. It elevates the project from a standard regression exercise to a business-insight-generating analysis. Without it, the project fails its own stated objective of "quantifying cannibalization."
+**Why necessary:**
+Highest-differentiation deliverable in proposal. Elevates project from standard regression exercise to business-insight-generating analysis. Without it, project fails own stated objective of "quantifying cannibalization."
 
 **Measurable Acceptance Criteria:**
 
-- At least 3 statistically significant cannibalization pairs are identified and documented (with Pearson r and p-value reported).
-- Promotional lift is computed for ≥ 10 distinct markdown events.
-- A final cannibalization report (3–5 pages) is saved as a PDF or markdown document with visual evidence.
-- All findings can be reproduced by re-running the module script with the same random seed.
+- ≥ 3 statistically significant cannibalization pairs identified and documented (Pearson r and p-value reported).
+- Promotional lift computed for ≥ 10 distinct markdown events.
+- Final cannibalization report (3–5 pages) saved as PDF or markdown document with visual evidence.
+- All findings reproducible by re-running module script with same random seed.
 
 ---
 
 ### FR-09: Model Persistence and Reporting Module
 
-**Description:**  
-(a) The best-performing model must be saved using `joblib` (or `pickle` for the GD model) to a `/models/` directory with a filename convention: `model_name_YYYYMMDD_vX.pkl`. (b) A final project report template (Jupyter Notebook + exported HTML/PDF) must be structured with: executive summary, methodology, results table, EDA highlights, model comparison, cannibalization findings, limitations, and future work sections.
+**Description:**
+(a) Best-performing model saved using `joblib` (or `pickle` for GD model) to `/models/` directory with filename convention: `model_name_YYYYMMDD_vX.pkl`. (b) Final project report template (Jupyter Notebook + exported HTML/PDF) structured with: executive summary, methodology, results table, EDA highlights, model comparison, cannibalization findings, limitations, and future work sections.
 
-**Why it is necessary:**  
-Model persistence is mandatory for reproducibility — a core academic requirement. Without a structured report, findings exist only in scattered notebook cells, which is insufficient for academic submission.
+**Why necessary:**
+Model persistence mandatory for reproducibility — core academic requirement. Without structured report, findings exist only in scattered notebook cells, insufficient for academic submission.
 
 **Measurable Acceptance Criteria:**
 
-- Saved model can be reloaded and produces identical predictions (bit-for-bit) on the test set without retraining.
+- Saved model reloads, produces identical predictions (bit-for-bit) on test set without retraining.
 - Final report template has all 8 required sections defined.
 - Report notebook executes end-to-end (Kernel → Restart & Run All) without errors.
-- Exported HTML/PDF report file size is ≤ 20MB.
+- Exported HTML/PDF report file size ≤ 20MB.
 
 ---
 
@@ -279,21 +279,21 @@ Model persistence is mandatory for reproducibility — a core academic requireme
 
 **Steps:**
 
-1. Formalize the forecasting objective as: _"Minimize RMSLE on daily sales prediction for the held-out Aug 16–31, 2017 test period across all (store_nbr, family) pairs."_
-2. Confirm the prediction horizon: **16 days ahead** (fixed by competition). For academic purposes, also report RMSE and MAPE.
+1. Formalize forecasting objective: _"Minimize RMSLE on daily sales prediction for held-out Aug 16–31, 2017 test period across all (store_nbr, family) pairs."_
+2. Confirm prediction horizon: **16 days ahead** (fixed by competition). Academic purposes: also report RMSE and MAPE.
 3. Define success thresholds: RMSLE < 0.45; MAPE < 15%; R² > 0.80.
 4. Define constraints:
-   - No data beyond the Favorita competition dataset is used unless explicitly noted.
+   - No data beyond Favorita competition dataset used unless explicitly noted.
    - Temporal integrity must be preserved: no shuffling of time-series.
-   - From-scratch gradient descent implementation is mandatory (as per deliverables).
+   - From-scratch gradient descent implementation mandatory (per deliverables).
 5. Document all assumptions (see Section 1.5).
-6. Confirm dataset availability: download Favorita dataset from Kaggle and verify file hashes.
+6. Confirm dataset availability: download Favorita dataset from Kaggle, verify file hashes.
 
 **Common Mistakes to Avoid:**
 
-- ❌ Treating this as a classification problem (sales is continuous — use regression metrics).
-- ❌ Defining MAPE as the only metric (MAPE is undefined when actual = 0; use RMSLE as primary — `log1p` handles zeros).
-- ❌ Failing to account for the temporal nature — this is NOT a standard i.i.d. regression problem.
+- Treating this as classification problem (sales continuous — use regression metrics).
+- Defining MAPE as only metric (MAPE undefined when actual = 0; use RMSLE as primary — `log1p` handles zeros).
+- Failing to account for temporal nature — this is NOT standard i.i.d. regression problem.
 
 ---
 
@@ -304,7 +304,7 @@ Model persistence is mandatory for reproducibility — a core academic requireme
 
 **Steps:**
 
-1. Register for Kaggle API and download the dataset:
+1. Register for Kaggle API, download dataset:
    ```bash
    kaggle competitions download -c store-sales-time-series-forecasting
    unzip store-sales-time-series-forecasting.zip -d data/raw/
@@ -314,15 +314,15 @@ Model persistence is mandatory for reproducibility — a core academic requireme
 3. Document dataset provenance:
    - Source: Kaggle — Store Sales Time Series Forecasting Competition (2021)
    - Data origin: Corporación Favorita, Ecuador
-   - License: Kaggle competition rules (for academic/educational use)
+   - License: Kaggle competition rules (academic/educational use)
    - Citation: _Corporación Favorita. (2021). Store Sales — Time Series Forecasting. Kaggle. https://kaggle.com/competitions/store-sales-time-series-forecasting_
-4. Load all files into Pandas DataFrames and print `.info()` and `.describe()` for each.
+4. Load all files into Pandas DataFrames, print `.info()` and `.describe()` for each.
 5. Record: row counts per file, column types, memory usage, date range (`2013-01-01` to `2017-08-31`), store count (54), family count (33).
 
 **Common Mistakes to Avoid:**
 
-- ❌ Using the Kaggle test set (`test.csv`) for model evaluation — it has no ground truth `sales` labels. Create your own hold-out split from `train.csv` using the final 16 days.
-- ❌ Not logging which version of the dataset was used. Store the download timestamp and save SHA-256 hashes of all input files to `data/checksums.txt`.
+- Using Kaggle test set (`test.csv`) for model evaluation — no ground truth `sales` labels. Create own hold-out split from `train.csv` using final 16 days.
+- Not logging which dataset version used. Store download timestamp, save SHA-256 hashes of all input files to `data/checksums.txt`.
 
 ---
 
@@ -345,12 +345,12 @@ txns   = pd.read_csv('data/raw/transactions.csv', parse_dates=['date'])
 df = train.merge(stores, on='store_nbr', how='left')
 df = df.merge(oil, on='date', how='left')
 df = df.merge(txns, on=['store_nbr', 'date'], how='left')
-# Holidays are processed separately and joined as feature flags (see 3.2)
+# Holidays processed separately, joined as feature flags (see 3.2)
 ```
 
 **3.2 — Handle missing oil prices and engineer holiday flags:**
 
-- `dcoilwtico`: ~44 missing values. Strategy: **forward-fill, then backward-fill** within the date-sorted series. Document count of filled rows.
+- `dcoilwtico`: ~44 missing values. Strategy: **forward-fill, then backward-fill** within date-sorted series. Document count of filled rows.
 - `holidays_events.csv` processing:
   ```python
   # Keep only non-transferred holidays as actual holidays
@@ -360,18 +360,18 @@ df = df.merge(txns, on=['store_nbr', 'date'], how='left')
   df['is_national_holiday'] = df['date'].isin(national['date']).astype(int)
   # Repeat for Regional (match locale_name to state) and Local (match to city)
   ```
-- `transactions`: ~2% missing (some store-days with no records). Forward-fill within `store_nbr` group.
+- `transactions`: ~2% missing (some store-days no records). Forward-fill within `store_nbr` group.
 
 **3.3 — Handle zero `sales`:**
 
-- Zero sales are **valid** in the Favorita dataset (a store may genuinely sell zero units of a product family on a given day). Do NOT impute or remove zeros.
-- Log the count and percentage of zero-sale rows per family as a data quality note.
+- Zero sales **valid** in Favorita dataset (store may genuinely sell zero units of product family on given day). Do NOT impute or remove zeros.
+- Log count and percentage of zero-sale rows per family as data quality note.
 
 **3.4 — Outlier handling:**
 
 - Compute IQR per `(store_nbr, family)` group.
 - Flag rows with `sales > Q3 + 3*IQR` as outliers (extreme spike days, e.g., during earthquake 2016). Do NOT remove; add `is_outlier` binary flag for model awareness.
-- Note: The April 2016 Ecuador earthquake caused documented sales anomalies — flag this date range (`2016-04-16` to `2016-05-15`) explicitly.
+- Note: April 2016 Ecuador earthquake caused documented sales anomalies — flag this date range (`2016-04-16` to `2016-05-15`) explicitly.
 
 **3.5 — Data type enforcement:**
 
@@ -394,9 +394,9 @@ df.to_parquet('data/processed/cleaned_data.parquet', index=False)
 
 **Common Mistakes to Avoid:**
 
-- ❌ Global forward-fill for oil prices across all rows without sorting by date first — this corrupts the temporal order.
-- ❌ Including transferred holidays as active holidays — use `holidays[holidays['transferred'] == False]`.
-- ❌ Not sorting by `(store_nbr, family, date)` before computing lag features (lags will be mismatched across groups).
+- Global forward-fill for oil prices across all rows without sorting by date first — corrupts temporal order.
+- Including transferred holidays as active holidays — use `holidays[holidays['transferred'] == False]`.
+- Not sorting by `(store_nbr, family, date)` before computing lag features (lags mismatched across groups).
 
 ---
 
@@ -412,7 +412,7 @@ df.to_parquet('data/processed/cleaned_data.parquet', index=False)
 - `.describe()` for all numerical columns.
 - Per-store and per-family mean/median daily sales.
 - Holiday vs. non-holiday mean sales comparison (ANOVA across national/regional/local/none; report F-statistic and p-values).
-- Oil price trend over the training period (2013–2017); annotate the 2015–2016 oil price crash and its correlation with aggregate sales.
+- Oil price trend over training period (2013–2017); annotate 2015–2016 oil price crash and correlation with aggregate sales.
 
 **4.2 — Time-series decomposition:**
 
@@ -436,7 +436,7 @@ result = seasonal_decompose(series, model='additive', period=365)
 
 - Pearson correlation heatmap: `sales` vs. all numerical features (`onpromotion`, `dcoilwtico`, `transactions`, lag features).
 - Cross-family correlation matrix (pivot to wide format, one column per family, correlate residual sales during `onpromotion > 0` periods).
-- Highlight pairs with |r| > 0.6 (potential cannibalization candidates, e.g., BEVERAGES vs. LIQUOR/WINE/BEER).
+- Highlight pairs with |r| > 0.6 (cannibalization candidates, e.g., BEVERAGES vs. LIQUOR/WINE/BEER).
 
 **4.5 — Key visualizations to produce:**
 | # | Plot | Purpose |
@@ -454,16 +454,16 @@ result = seasonal_decompose(series, model='additive', period=365)
 
 **4.6 — Insights to document (minimum 3):**
 
-- Example: _"BEVERAGES and LIQUOR/WINE/BEER exhibit a negative correlation of r = −0.48 during `onpromotion > 0` weeks in Store 1, suggesting cannibalization."_
-- Example: _"The ACF plot for GROCERY I shows significant autocorrelation at lags 7, 14, and 365, confirming weekly and annual seasonality."_
-- Example: _"National holidays show a 31% mean sales lift; regional holidays show only 9% — indicating holiday effect is locale-specific and must be encoded with granularity."_
-- Example: _"Oil price dropped 60% between mid-2014 and early-2016; aggregate store sales declined ~8% over the same window, suggesting macroeconomic sensitivity."_
+- Example: _"BEVERAGES and LIQUOR/WINE/BEER exhibit negative correlation r = −0.48 during `onpromotion > 0` weeks in Store 1, suggesting cannibalization."_
+- Example: _"ACF plot for GROCERY I shows significant autocorrelation at lags 7, 14, and 365, confirming weekly and annual seasonality."_
+- Example: _"National holidays show 31% mean sales lift; regional holidays show only 9% — indicating holiday effect locale-specific, must be encoded with granularity."_
+- Example: _"Oil price dropped 60% between mid-2014 and early-2016; aggregate store sales declined ~8% over same window, suggesting macroeconomic sensitivity."_
 
 **Common Mistakes to Avoid:**
 
-- ❌ Computing correlations on unsorted data without time-alignment.
-- ❌ Using `period=52` for daily data — correct period is **365** (or 7 for weekly seasonality; test both).
-- ❌ Conflating Pearson correlation with causation in the cannibalization analysis.
+- Computing correlations on unsorted data without time-alignment.
+- Using `period=52` for daily data — correct period is **365** (or 7 for weekly seasonality; test both).
+- Conflating Pearson correlation with causation in cannibalization analysis.
 
 ---
 
@@ -522,7 +522,7 @@ for window in [7, 14, 28]:
 **5.5 — Promotional features:**
 
 ```python
-# onpromotion is already in train.csv per (store_nbr, family, date)
+# onpromotion already in train.csv per (store_nbr, family, date)
 df['onpromotion_lag_1d']   = df.groupby(['store_nbr', 'family'])['onpromotion'].shift(1)
 df['onpromotion_rolling7d'] = df.groupby(['store_nbr', 'family'])['onpromotion'].transform(
     lambda x: x.shift(1).rolling(7).mean()
@@ -535,14 +535,14 @@ df['oil_rolling_28d']  = df['dcoilwtico'].shift(1).rolling(28).mean()
 **5.6 — Cannibalization proxy features:**
 
 - Identify top-3 correlated product families per store (from EDA cross-family correlation matrix during `onpromotion > 0` periods).
-- For each `(store_nbr, family, date)`, add the 7-day lagged mean sales of those correlated families.
+- For each `(store_nbr, family, date)`, add 7-day lagged mean sales of those correlated families.
 
 **5.7 — Feature selection:**
 
 - Remove features with > 90% zero values.
 - Apply Variance Inflation Factor (VIF) analysis to detect multicollinearity among numerical features.
 - Drop features with VIF > 10 if using linear models.
-- For tree models, collinearity is acceptable — feature selection is based on SHAP importance post-training.
+- For tree models, collinearity acceptable — feature selection based on SHAP importance post-training.
 
 **5.8 — Drop NaN rows created by lags:**
 
@@ -552,9 +552,9 @@ df.dropna(subset=['sales_lag_365d'], inplace=True)  # Most restrictive lag
 
 **Common Mistakes to Avoid:**
 
-- ❌ Computing rolling mean without `.shift(1)` — this leaks the current day's sales into itself.
-- ❌ Computing lags globally without `groupby` — lags will cross `(store_nbr, family)` boundaries.
-- ❌ Not dropping NaN rows from the 365-day lag (this removes the first year of data per series — expected and correct, leaving 4+ years for training).
+- Computing rolling mean without `.shift(1)` — leaks current day's sales into itself.
+- Computing lags globally without `groupby` — lags cross `(store_nbr, family)` boundaries.
+- Not dropping NaN rows from 365-day lag (removes first year of data per series — expected and correct, leaving 4+ years for training).
 
 ---
 
@@ -636,10 +636,10 @@ cv_scores = cross_val_score(model_xgb, X_train, y_train, cv=tscv, scoring='neg_r
 
 **Common Mistakes to Avoid:**
 
-- ❌ Using `train_test_split(shuffle=True)` on time-series — future data leaks into training.
-- ❌ Using `KFold` instead of `TimeSeriesSplit` for cross-validation.
-- ❌ Not setting `random_state=42` consistently — results will not be reproducible.
-- ❌ Fitting `StandardScaler` on the entire dataset before splitting (scaler must be fit on training data only).
+- Using `train_test_split(shuffle=True)` on time-series — future data leaks into training.
+- Using `KFold` instead of `TimeSeriesSplit` for cross-validation.
+- Not setting `random_state=42` consistently — results not reproducible.
+- Fitting `StandardScaler` on entire dataset before splitting (scaler must be fit on training data only).
 
 ---
 
@@ -669,12 +669,12 @@ def evaluate_model(y_true, y_pred, model_name):
 
 **7.2 — Produce comparison table:**
 
-| Model                | RMSLE | RMSE | MAPE (%) | R²  |
-| -------------------- | ----- | ---- | -------- | --- |
-| Seasonal Naive       | —     | —    | —        | —   |
-| GD Linear Regression | —     | —    | —        | —   |
-| XGBoost (tuned)      | —     | —    | —        | —   |
-| LightGBM (tuned)     | —     | —    | —        | —   |
+| Model | RMSLE | RMSE | MAPE (%) | R² |
+|-------|-------|------|----------|----|
+| Seasonal Naive | — | — | — | — |
+| GD Linear Regression | — | — | — | — |
+| XGBoost (tuned) | — | — | — | — |
+| LightGBM (tuned) | — | — | — | — |
 
 _(Fill with actual experimental results)_
 
@@ -706,9 +706,9 @@ shap.summary_plot(shap_values, X_test, plot_type='bar')
 
 **Common Mistakes to Avoid:**
 
-- ❌ Using MAPE as the sole metric — zero `sales` values cause division by zero; use RMSLE as primary.
-- ❌ Not reporting confidence intervals or variance across CV folds.
-- ❌ Evaluating on the training set and claiming good performance.
+- Using MAPE as sole metric — zero `sales` values cause division by zero; use RMSLE as primary.
+- Not reporting confidence intervals or variance across CV folds.
+- Evaluating on training set and claiming good performance.
 
 ---
 
@@ -758,13 +758,13 @@ assert np.allclose(y_pred_reloaded, y_pred_original), "Predictions differ after 
 ```
 
 **8.6 — Document final configuration:**
-Create `models/README.md` containing: model name, training date, training data date range, test RMSE/MAPE/R², feature list, preprocessing steps, and random seeds used.
+Create `models/README.md` containing: model name, training date, training data date range, test RMSE/MAPE/R², feature list, preprocessing steps, random seeds used.
 
 **Common Mistakes to Avoid:**
 
-- ❌ Saving model without saving the corresponding scaler/preprocessor — inference will fail.
-- ❌ Not verifying that the reloaded model produces identical outputs.
-- ❌ Saving the model using a path that includes spaces (cross-platform compatibility issue).
+- Saving model without saving corresponding scaler/preprocessor — inference fails.
+- Not verifying reloaded model produces identical outputs.
+- Saving model using path that includes spaces (cross-platform compatibility issue).
 
 ---
 
@@ -775,18 +775,18 @@ Create `models/README.md` containing: model name, training date, training data d
 
 **Final Report Structure:**
 
-| Section                     | Content                                                 |
-| --------------------------- | ------------------------------------------------------- |
-| 1. Executive Summary        | 1 page: problem, approach, best result, key insight     |
-| 2. Dataset Description      | Schema, provenance, citation, size                      |
-| 3. Preprocessing            | What was done, why, before/after statistics             |
-| 4. EDA                      | Minimum 5 figures with interpretations                  |
-| 5. Feature Engineering      | Feature table, rationale per group                      |
-| 6. Model Development        | Pseudocode + code for each model                        |
-| 7. Results                  | Comparison table, actual vs. predicted plots            |
-| 8. Cannibalization Analysis | Correlation matrix, identified pairs, lift analysis     |
-| 9. Limitations              | Data limitations, model assumptions, scope gaps         |
-| 10. Future Work             | Multi-step forecasting, SKU-level, deep learning (LSTM) |
+| Section | Content |
+|---------|---------|
+| 1. Executive Summary | 1 page: problem, approach, best result, key insight |
+| 2. Dataset Description | Schema, provenance, citation, size |
+| 3. Preprocessing | What was done, why, before/after statistics |
+| 4. EDA | Minimum 5 figures with interpretations |
+| 5. Feature Engineering | Feature table, rationale per group |
+| 6. Model Development | Pseudocode + code for each model |
+| 7. Results | Comparison table, actual vs. predicted plots |
+| 8. Cannibalization Analysis | Correlation matrix, identified pairs, lift analysis |
+| 9. Limitations | Data limitations, model assumptions, scope gaps |
+| 10. Future Work | Multi-step forecasting, SKU-level, deep learning (LSTM) |
 
 **Key Visualizations for Final Report:**
 
@@ -799,10 +799,10 @@ Create `models/README.md` containing: model name, training date, training data d
 
 **Common Mistakes to Avoid:**
 
-- ❌ Claiming model "achieves 95% accuracy" — this is a regression task; accuracy is not a valid metric.
-- ❌ Omitting the Limitations section — this is a required academic element.
-- ❌ Presenting results without uncertainty quantification (report CV standard deviation).
-- ❌ Not running the notebook end-to-end before submission.
+- Claiming model "achieves 95% accuracy" — this is regression task; accuracy not valid metric.
+- Omitting Limitations section — required academic element.
+- Presenting results without uncertainty quantification (report CV standard deviation).
+- Not running notebook end-to-end before submission.
 
 ---
 
@@ -812,12 +812,12 @@ Create `models/README.md` containing: model name, training date, training data d
 
 ```
 WEEK 1: Problem Framing & Data Acquisition
-[ ] Read Kaggle competition page (store-sales-time-series-forecasting) and annotate all 6 file schemas.
+[ ] Read Kaggle competition page (store-sales-time-series-forecasting), annotate all 6 file schemas.
 [ ] Download all 6 CSV files via Kaggle API; verify file sizes and row counts.
 [ ] Set up project directory structure: /data/raw/, /data/processed/, /notebooks/, /outputs/, /models/, /reports/.
 [ ] Initialize Git repository; create .gitignore (exclude /data/raw/ due to file size ~112MB).
 [ ] Write problem statement and assumptions document (1–2 pages), explicitly noting RMSLE as primary metric.
-[ ] Confirm and document the temporal train/test split: train < 2017-08-16, test = 2017-08-16 to 2017-08-31.
+[ ] Confirm and document temporal train/test split: train < 2017-08-16, test = 2017-08-16 to 2017-08-31.
 [ ] DELIVERABLE: GitHub repo initialized; problem_statement.md committed.
 
 WEEK 2: Data Preprocessing
@@ -902,14 +902,14 @@ WEEK 8: Finalization & Submission
 
 ### 5.1 Reproducibility Plan
 
-| Element                | Requirement                                                                                                                  |
-| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| **Random seeds**       | Set `random_state=42` in all model constructors, all `numpy.random.seed(42)` calls, and `PYTHONHASHSEED=42` at script start. |
-| **Seed documentation** | Seeds documented in models/README.md and in a `config.py` file at the project root.                                          |
-| **Environment**        | `requirements.txt` or `environment.yml` committed to repo; pin all package versions (e.g., `xgboost==2.0.3`).                |
-| **Data versioning**    | Record SHA-256 hash of all input CSVs in a `data/checksums.txt` file.                                                        |
-| **Execution order**    | Notebooks are numbered (01_preprocessing, 02_eda, 03_features, etc.) to enforce execution order.                             |
-| **Floating point**     | Note that floating-point results may vary across CPU architectures; report with 4 significant figures.                       |
+| Element | Requirement |
+|---------|-------------|
+| **Random seeds** | Set `random_state=42` in all model constructors, all `numpy.random.seed(42)` calls, and `PYTHONHASHSEED=42` at script start. |
+| **Seed documentation** | Seeds documented in models/README.md and in `config.py` file at project root. |
+| **Environment** | `requirements.txt` or `environment.yml` committed to repo; pin all package versions (e.g., `xgboost==2.0.3`). |
+| **Data versioning** | Record SHA-256 hash of all input CSVs in `data/checksums.txt` file. |
+| **Execution order** | Notebooks numbered (01_preprocessing, 02_eda, 03_features, etc.) to enforce execution order. |
+| **Floating point** | Note floating-point results may vary across CPU architectures; report with 4 significant figures. |
 
 ---
 
@@ -947,7 +947,7 @@ retail-demand-forecasting/
 
 ### 5.3 Experiment Tracking
 
-Use one of the following:
+Use one of:
 
 - **Option A (Recommended)**: MLflow with local UI.
   ```python
@@ -958,7 +958,7 @@ Use one of the following:
       mlflow.log_metric("rmse_test", rmse)
       mlflow.sklearn.log_model(model, "xgboost_model")
   ```
-- **Option B (Lightweight)**: A manually maintained `experiments_log.csv` with columns: `run_id`, `timestamp`, `model`, `hyperparams`, `rmse_train`, `rmse_test`, `mape_test`, `notes`.
+- **Option B (Lightweight)**: Manually maintained `experiments_log.csv` with columns: `run_id`, `timestamp`, `model`, `hyperparams`, `rmse_train`, `rmse_test`, `mape_test`, `notes`.
 
 Minimum tracked: model name, hyperparameters, train RMSE, test RMSE, test MAPE, random seed, training date.
 
@@ -966,7 +966,7 @@ Minimum tracked: model name, hyperparameters, train RMSE, test RMSE, test MAPE, 
 
 ### 5.4 Dataset Citation
 
-Include in all report documents and the README:
+Include in all report documents and README:
 
 > Corporación Favorita. (2021). _Store Sales — Time Series Forecasting_ [Dataset]. Kaggle Competition.  
 > Retrieved from https://www.kaggle.com/competitions/store-sales-time-series-forecasting  
@@ -978,36 +978,36 @@ APA format for academic report citations.
 
 ### 5.5 Ethical Considerations
 
-| Consideration              | Status & Action                                                                                                                                                        |
-| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Privacy**                | Dataset contains no personally identifiable information (PII). ✅                                                                                                      |
-| **Bias in predictions**    | Verify model does not systematically under-predict for minority store types (e.g., Type C stores). Report performance stratified by store type.                        |
-| **Causal claims**          | Do NOT claim promotional markdowns _cause_ sales increases — only correlation/association is demonstrated. Use precise language: "associated with," "correlated with." |
-| **Generalization claims**  | Do NOT claim the model will generalize to other retailers. Scope limitations must be stated explicitly.                                                                |
-| **Model deployment risks** | Note that deploying inventory decisions based on model predictions without human oversight could cause financial harm if model is miscalibrated.                       |
+| Consideration | Status & Action |
+|---------------|-----------------|
+| **Privacy** | Dataset contains no personally identifiable information (PII). ✅ |
+| **Bias in predictions** | Verify model does not systematically under-predict for minority store types (e.g., Type C stores). Report performance stratified by store type. |
+| **Causal claims** | Do NOT claim promotional markdowns _cause_ sales increases — only correlation/association demonstrated. Use precise language: "associated with," "correlated with." |
+| **Generalization claims** | Do NOT claim model will generalize to other retailers. Scope limitations must be stated explicitly. |
+| **Model deployment risks** | Note that deploying inventory decisions based on model predictions without human oversight could cause financial harm if model is miscalibrated. |
 
 ---
 
 ### 5.6 Plagiarism Avoidance
 
 - All code produced must be original or properly attributed.
-- If referencing external code (e.g., a SHAP tutorial), cite the source as a comment in the code cell.
+- If referencing external code (e.g., SHAP tutorial), cite source as comment in code cell.
 - Use `git blame` history as evidence of original authorship if challenged.
-- The from-scratch GD implementation must be coded independently — do NOT copy from external repositories.
-- All figures and tables in the report must be generated by the project code, not from external sources.
+- From-scratch GD implementation must be coded independently — do NOT copy from external repositories.
+- All figures and tables in report must be generated by project code, not from external sources.
 
 ---
 
 ### 5.7 Evaluation Methodology Correctness
 
-| Rule                               | Rationale                                                                                                               |
-| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| **Temporal split only**            | Time-series data has temporal autocorrelation; random splits cause leakage.                                             |
-| **No future features in training** | All features derived from `t` must use data available strictly before time `t`.                                         |
-| **Scaler fit on train only**       | Fitting on the full dataset causes test set statistics to influence training normalization (leakage).                   |
-| **No MAPE when actuals ≈ 0**       | MAPE is undefined or extreme when actual values approach zero; clip or use alternative (SMAPE, RMSE).                   |
-| **One test set**                   | Do not tune on the test set. Use CV folds on training data for tuning; the held-out test set is evaluated exactly once. |
-| **Report variance**                | Always report CV RMSE as `mean ± std`, not just mean.                                                                   |
+| Rule | Rationale |
+|------|-----------|
+| **Temporal split only** | Time-series data has temporal autocorrelation; random splits cause leakage. |
+| **No future features in training** | All features derived from `t` must use data available strictly before time `t`. |
+| **Scaler fit on train only** | Fitting on full dataset causes test set statistics to influence training normalization (leakage). |
+| **No MAPE when actuals ≈ 0** | MAPE undefined or extreme when actual values approach zero; clip or use alternative (SMAPE, RMSE). |
+| **One test set** | Do not tune on test set. Use CV folds on training data for tuning; held-out test set evaluated exactly once. |
+| **Report variance** | Always report CV RMSE as `mean ± std`, not just mean. |
 
 ---
 

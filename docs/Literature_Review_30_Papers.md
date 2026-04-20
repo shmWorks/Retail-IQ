@@ -28,8 +28,8 @@ All 30 papers below satisfy **every** requirement:
 **DOI:** [10.3390/forecast6030027](https://doi.org/10.3390/forecast6030027)  
 **Full-text:** [https://www.mdpi.com/2571-9394/6/3/27](https://www.mdpi.com/2571-9394/6/3/27)
 
-Systematic mapping study analysing 516 sales forecasting papers (2013–2023). Identifies gradient boosting machines (XGBoost, LightGBM) as the most adopted ML methods for retail sales prediction. Confirms RMSE, MAPE, and RMSLE as the most commonly reported evaluation metrics.  
-**Relevance:** Validates the project's choice of XGBoost/LightGBM as primary models and confirms the evaluation metrics in the roadmap (FR-07).
+Mapping study of 516 sales forecasting papers (2013–2023). XGBoost, LightGBM = most adopted ML methods for retail sales. RMSE, MAPE, RMSLE = standard metrics.  
+**Relevance:** Validates XGBoost/LightGBM choice and evaluation metrics (FR-07).
 
 ---
 
@@ -39,8 +39,8 @@ Systematic mapping study analysing 516 sales forecasting papers (2013–2023). I
 **DOI:** [10.64753/jcasc.v10i4.3736](https://doi.org/10.64753/jcasc.v10i4.3736)  
 **Full-text:** [https://doi.org/10.64753/jcasc.v10i4.3736](https://doi.org/10.64753/jcasc.v10i4.3736) (open access)
 
-Proposes a hybrid forecasting framework combining the robust feature extraction and gradient boosting strengths of XGBoost with the sequential pattern recognition of LSTM networks. The model significantly improves supply chain demand forecasting accuracy.  
-**Relevance:** Promotes the validity of the project's base tree models (XGBoost) and presents a robust architectural framework for extending them into deep learning hybrid systems (FR-05).
+Hybrid framework: XGBoost feature extraction + LSTM sequential patterns. Improves supply chain forecasting accuracy.  
+**Relevance:** Validates XGBoost base models; shows path to deep learning hybrids (FR-05).
 
 ---
 
@@ -50,8 +50,8 @@ Proposes a hybrid forecasting framework combining the robust feature extraction 
 **DOI:** [10.3390/forecast6030031](https://doi.org/10.3390/forecast6030031)  
 **Full-text:** [https://www.mdpi.com/2571-9394/6/3/31](https://www.mdpi.com/2571-9394/6/3/31)
 
-Compares Transformer, Informer, Autoformer, PatchTST, and TFT against AutoARIMA and AutoETS on the M5 competition dataset. TFT and Informer achieve 26–29% MASE improvement over seasonal naïve for short-term forecasts (≤16 days), but at higher computational cost.  
-**Relevance:** Validates the project's decision to prioritise tree-based models over Transformers for the 16-day horizon while positioning TFT as a Future Work option (FR-05).
+Transformer, Informer, Autoformer, PatchTST, TFT vs AutoARIMA, AutoETS on M5. TFT, Informer achieve 26–29% MASE improvement for short-term (≤16 days), higher compute cost.  
+**Relevance:** Validates tree-based over Transformers for 16-day horizon; TFT = Future Work (FR-05).
 
 ---
 
@@ -60,8 +60,8 @@ Compares Transformer, Informer, Autoformer, PatchTST, and TFT against AutoARIMA 
 *arXiv preprint*, arXiv:2601.18919, Jan. 2026.  
 **Full-text:** [https://arxiv.org/abs/2601.18919](https://arxiv.org/abs/2601.18919)
 
-Winner of the VN2 Inventory Planning Challenge. Proposes a single global CatBoost model across all store-product combinations, with stockout-aware feature engineering that distinguishes true zero demand from censored demand. Uses dynamic per-series scaling and time-based observation weights.  
-**Relevance:** Directly addresses the Favorita dataset's zero-sales challenge and validates the project's multi-family, global model architecture (FR-02, FR-03, FR-05).
+VN2 Inventory Planning Challenge winner. Single global CatBoost with stockout-aware features. Distinguishes true zero demand from censored demand. Dynamic per-series scaling + time-based observation weights.  
+**Relevance:** Addresses Favorita zero-sales challenge; validates global model architecture (FR-02, FR-03, FR-05).
 
 ---
 
@@ -73,8 +73,8 @@ Winner of the VN2 Inventory Planning Challenge. Proposes a single global CatBoos
 **DOI:** [10.1002/for.70039](https://doi.org/10.1002/for.70039)  
 **Full-text:** [https://onlinelibrary.wiley.com/doi/10.1002/for.70039](https://onlinelibrary.wiley.com/doi/10.1002/for.70039) (open access)
 
-Analyses the full promotional demand lifecycle: pre-promotion stockpiling, during-promotion spike, and post-promotion dip. ML methods (gradient boosting, deep learning) reduce RMSE up to 18% versus models that only capture the during-promotion spike. Features like "days since last promotion" are shown to be highly significant.  
-**Relevance:** Directly informs the project's FR-08 (Cannibalization & Promotional Impact Analysis) and feature engineering for the `onpromotion` variable (FR-03).
+Promotional lifecycle: pre-promotion stockpiling, during-promotion spike, post-promotion dip. ML methods reduce RMSE up to 18% vs spike-only models. "Days since last promotion" = highly significant feature.  
+**Relevance:** Informs FR-08 (Cannibalization & Promo Analysis) and `onpromotion` feature engineering (FR-03).
 
 ---
 
@@ -84,8 +84,8 @@ Analyses the full promotional demand lifecycle: pre-promotion stockpiling, durin
 **DOI:** [10.3390/make6040128](https://doi.org/10.3390/make6040128)  
 **Full-text:** [https://www.mdpi.com/2504-4990/6/4/128](https://www.mdpi.com/2504-4990/6/4/128) (open access)
 
-Investigates how incorporating promotional data enhances sales forecasting accuracy across various aggregation levels (SKUs, stores, distribution centers) using statistical and deep neural networking methods.  
-**Relevance:** Directly informs the project's FR-08 (Cannibalization & Promotional Impact Analysis) and hierarchical reconciliation methods.
+Promotional data enhances forecasting across SKU, store, distribution center levels using statistical and deep neural methods.  
+**Relevance:** Informs FR-08 and hierarchical reconciliation methods.
 
 ---
 
@@ -95,8 +95,8 @@ Investigates how incorporating promotional data enhances sales forecasting accur
 **DOI:** [10.17721/tppe.2023.47.11](https://doi.org/10.17721/tppe.2023.47.11)  
 **Full-text:** [https://tppe.net.ua/archive/2023/1_2023/11.pdf](https://tppe.net.ua/archive/2023/1_2023/11.pdf) (open access)
 
-Evaluates the application of ML models for predicting optimal order quantities in grocery e-commerce, specifically emphasizing the role of the Optuna framework for hyperparameter optimization and cross-validation procedures.  
-**Relevance:** Demonstrates the necessity and efficacy of employing Optuna for rigorous hyperparameter optimization in retail demand environments (FR-06).
+ML models for grocery e-commerce order quantities. Optuna framework for hyperparameter optimization and cross-validation.  
+**Relevance:** Optuna efficacy for retail demand (FR-06).
 
 ---
 
@@ -108,8 +108,8 @@ Evaluates the application of ML models for predicting optimal order quantities i
 **DOI:** [10.1007/s10994-024-06501-2](https://doi.org/10.1007/s10994-024-06501-2)  
 **Full-text:** [https://link.springer.com/article/10.1007/s10994-024-06501-2](https://link.springer.com/article/10.1007/s10994-024-06501-2) (open access)
 
-Proposes VEST, an automated feature engineering system for time-series forecasting that systematically generates and selects lag features, rolling statistics, and calendar features. Empirical results show that well-engineered features consistently outperform purely autoregressive approaches.  
-**Relevance:** Validates the project's manual feature engineering choices (lag windows 1/7/14/365, rolling windows 7/14/28) and provides a citable reference for these decisions (FR-03).
+VEST: automated feature engineering for time-series. Generates lag features, rolling statistics, calendar features. Well-engineered features outperform autoregressive approaches.  
+**Relevance:** Validates manual feature choices (lag 1/7/14/365, rolling 7/14/28) and provides citable reference (FR-03).
 
 ---
 
@@ -118,8 +118,8 @@ Proposes VEST, an automated feature engineering system for time-series forecasti
 *arXiv preprint*, arXiv:2412.14718, Dec. 2024.  
 **Full-text:** [https://arxiv.org/abs/2412.14718](https://arxiv.org/abs/2412.14718)
 
-From Walmart Global Tech. Proposes Multi-Stage HiFoReAd for hierarchical time-series reconciliation using diverse base models, Bayesian Optimisation ensembling, and harmonic alignment. Demonstrates significant accuracy improvements on Walmart's Ads-demand dataset.  
-**Relevance:** Provides a production-grade hierarchical reconciliation approach applicable to the Favorita dataset's store-family hierarchy (FR-07 Future Work).
+Walmart Global Tech. Multi-Stage HiFoReAd for hierarchical time-series. Diverse base models, Bayesian Optimisation ensembling, harmonic alignment. Significant accuracy on Walmart Ads-demand dataset.  
+**Relevance:** Production-grade hierarchical reconciliation for Favorita store-family hierarchy (FR-07 Future Work).
 
 ---
 
@@ -129,8 +129,8 @@ From Walmart Global Tech. Proposes Multi-Stage HiFoReAd for hierarchical time-se
 **DOI:** [10.3390/app15010109](https://doi.org/10.3390/app15010109)  
 **Full-text:** [https://www.mdpi.com/2076-3417/15/1/109](https://www.mdpi.com/2076-3417/15/1/109)
 
-Proposes STHA (Spatiotemporal Hypergraph Attention Network) for multi-store demand forecasting. Tested on the **Corporación Favorita** dataset — outperforms ARIMA, LSTM, TCN, Transformer, and PatchTST with >15 percentage point MAPE reduction.  
-**Relevance:** Uses the exact same Favorita dataset as the project. Demonstrates spatial-temporal modeling using store-cluster similarities, validating the use of `store_cluster` and `store_type` features (FR-03).
+STHA (Spatiotemporal Hypergraph Attention Network) for multi-store demand. Tested on **Corporación Favorita** dataset — outperforms ARIMA, LSTM, TCN, Transformer, PatchTST by >15 percentage point MAPE.  
+**Relevance:** Same Favorita dataset. Spatial-temporal modeling via store-cluster similarities; validates `store_cluster` and `store_type` features (FR-03).
 
 ---
 
@@ -141,8 +141,8 @@ Proposes STHA (Spatiotemporal Hypergraph Attention Network) for multi-store dema
 *arXiv preprint*, arXiv:2504.05894, Apr. 2025.  
 **Full-text:** [https://arxiv.org/abs/2504.05894](https://arxiv.org/abs/2504.05894)
 
-Proposes AID (Automated Identification of Demand), a two-stage framework that distinguishes naturally occurring zeroes (genuine no demand) from artificially occurring zeroes (stockouts, recording errors). Uses statistical modeling to classify demand types before forecasting.  
-**Relevance:** Directly applicable to the Favorita dataset which contains significant zero-sale rows. Provides a principled method to handle zero-inflated families and the 2016 earthquake period (FR-02, FR-03).
+AID (Automated Identification of Demand): two-stage framework distinguishing natural zeroes (genuine no demand) from artificial zeroes (stockouts, recording errors). Statistical modeling classifies demand types before forecasting.  
+**Relevance:** Directly applicable to Favorita zero-sale rows. Principled method for zero-inflated families and 2016 earthquake period (FR-02, FR-03).
 
 ---
 
@@ -151,8 +151,8 @@ Proposes AID (Automated Identification of Demand), a two-stage framework that di
 *arXiv preprint*, arXiv:2602.22685, Feb. 2026.  
 **Full-text:** [https://arxiv.org/abs/2602.22685](https://arxiv.org/abs/2602.22685)
 
-Introduces a Mixture-of-Experts encoder with autoregressive hurdle decoder for intermittent demand. The hurdle model separates the probability of any demand occurring from the magnitude of demand when it does. Achieves SOTA on M5 and proprietary retail datasets.  
-**Relevance:** Provides a methodological framework for handling zero-inflated `sales` distribution in sparse Favorita families like BABY CARE and MAGAZINES (FR-03, FR-05).
+Mixture-of-Experts encoder + autoregressive hurdle decoder for intermittent demand. Hurdle model separates probability of demand occurrence from magnitude. SOTA on M5 and proprietary retail datasets.  
+**Relevance:** Framework for zero-inflated `sales` in sparse Favorita families (BABY CARE, MAGAZINES) (FR-03, FR-05).
 
 ---
 
@@ -164,8 +164,8 @@ Introduces a Mixture-of-Experts encoder with autoregressive hurdle decoder for i
 **DOI:** [10.1590/0103-6513.20230075](https://doi.org/10.1590/0103-6513.20230075)  
 **Full-text:** [https://www.scielo.br/j/prod/a/YYdT5VxQBM5dqD3HYW5RxPf/](https://www.scielo.br/j/prod/a/YYdT5VxQBM5dqD3HYW5RxPf/) (open access)
 
-Applies SHAP values to ML demand forecasting models in a direct sales company. Shows how SHAP provides actionable insights into feature contributions, helping integrate ML models into business forecasting processes by making predictions interpretable.  
-**Relevance:** Validates the project's plan to use SHAP for feature importance analysis (FR-07) and demonstrates how SHAP integrates with business decision-making in sales forecasting.
+SHAP values for ML demand forecasting in direct sales company. SHAP provides actionable feature contribution insights; integrates ML into business forecasting processes.  
+**Relevance:** Validates SHAP for feature importance analysis (FR-07); demonstrates business decision-making integration.
 
 ---
 
@@ -175,8 +175,8 @@ Applies SHAP values to ML demand forecasting models in a direct sales company. S
 **DOI:** [10.1016/j.ijforecast.2023.06.006](https://doi.org/10.1016/j.ijforecast.2023.06.006)  
 **Full-text:** [https://arxiv.org/abs/2206.02184](https://arxiv.org/abs/2206.02184)
 
-Proposes LoMEF for producing local explanations of global forecasting model predictions using counterfactual analysis and SHAP-like feature attributions. Demonstrates how explainability methods must be adapted for time-series contexts to avoid misleading interpretations.  
-**Relevance:** Directly supports FR-07 (SHAP analysis) and provides guidance on correctly interpreting feature importances in the project's global multi-family model.
+LoMEF: local explanations for global forecasting models via counterfactual analysis and SHAP-like feature attributions. Explainability methods must adapt for time-series to avoid misleading interpretations.  
+**Relevance:** Directly supports FR-07 (SHAP analysis) and guides correct feature importance interpretation in global multi-family model.
 
 ---
 
@@ -186,8 +186,8 @@ Proposes LoMEF for producing local explanations of global forecasting model pred
 **DOI:** [10.29121/shodhkosh.v5.i3.2024.5185](https://doi.org/10.29121/shodhkosh.v5.i3.2024.5185)  
 **Full-text:** [https://doi.org/10.29121/shodhkosh.v5.i3.2024.5185](https://doi.org/10.29121/shodhkosh.v5.i3.2024.5185) (open access)
 
-Comparatively analyzes forecasting models built upon deep learning methodologies coupled with interpretability frameworks such as SHAP. Focuses on the imperative need for "glass box" transparent models that stakeholders can trust in volatile market scenarios.  
-**Relevance:** Confirms SHAP as an optimal interpretability method and directly supports the methodology justification for analyzing feature contributions (FR-07).
+Deep learning forecasting models + SHAP interpretability. Need for "glass box" transparent models stakeholders can trust in volatile markets.  
+**Relevance:** Confirms SHAP as optimal interpretability method; supports feature contribution analysis methodology (FR-07).
 
 ---
 
@@ -199,8 +199,8 @@ Comparatively analyzes forecasting models built upon deep learning methodologies
 **DOI:** [10.1609/aaai.v37i9.26317](https://doi.org/10.1609/aaai.v37i9.26317)  
 **Full-text:** [https://ojs.aaai.org/index.php/AAAI/article/view/26317](https://ojs.aaai.org/index.php/AAAI/article/view/26317)
 
-High-profile demonstration that simple one-layer linear models (LTSF-Linear) match or outperform Transformer models on standard long-term forecasting benchmarks. Argues that Transformers' permutation-invariant attention may not respect temporal order critical for time-series.  
-**Relevance:** Provides strong academic justification for the project's use of tree-based models rather than Transformers. Supports Limitations and Future Work discussion.
+Simple one-layer linear models (LTSF-Linear) match or outperform Transformers on long-term forecasting benchmarks. Transformers' permutation-invariant attention may not respect temporal order critical for time-series.  
+**Relevance:** Academic justification for tree-based models over Transformers. Supports Limitations and Future Work.
 
 ---
 
@@ -209,8 +209,8 @@ High-profile demonstration that simple one-layer linear models (LTSF-Linear) mat
 *arXiv preprint*, arXiv:2510.15821, Oct. 2025.  
 **Full-text:** [https://arxiv.org/abs/2510.15821](https://arxiv.org/abs/2510.15821)
 
-Foundation model for time-series forecasting extending Chronos to multivariate and multi-horizon settings. Achieves competitive zero-shot performance on unseen retail datasets without fine-tuning. Uses group attention mechanism and synthetic data training.  
-**Relevance:** Represents cutting-edge foundation models for time-series. Provides context for the Future Work section and a potential baseline comparison (FR-05).
+Foundation model extending Chronos to multivariate, multi-horizon settings. Competitive zero-shot performance on unseen retail datasets without fine-tuning. Group attention + synthetic data training.  
+**Relevance:** Cutting-edge foundation models for time-series; Future Work context and potential baseline (FR-05).
 
 ---
 
@@ -219,18 +219,18 @@ Foundation model for time-series forecasting extending Chronos to multivariate a
 *arXiv preprint*, arXiv:2511.00552, Nov. 2025.  
 **Full-text:** [https://arxiv.org/abs/2511.00552](https://arxiv.org/abs/2511.00552)
 
-Applies TFT to forecast weekly Walmart sales using static store identifiers and time-varying exogenous signals (holidays, CPI, fuel price, temperature) for 1–5 week-ahead probabilistic forecasts. TFT outperforms XGB, CNN, LSTM on multiple metrics.  
-**Relevance:** Demonstrates TFT's capability with exogenous covariates similar to the Favorita dataset's structure (holidays, oil price, store metadata). Informs the project's optional Advanced Model 3 (FR-05).
+TFT for weekly Walmart sales using static store identifiers + time-varying exogenous signals (holidays, CPI, fuel price, temperature). 1–5 week-ahead probabilistic forecasts. TFT outperforms XGB, CNN, LSTM.  
+**Relevance:** TFT with exogenous covariates similar to Favorita structure (holidays, oil price, store metadata). Informs Advanced Model 3 (FR-05).
 
 ---
 
-### [19] Hobor, L., Brčić, M., Polutnik, L., and Kapetanović, A. (2025)
+### [19] Hobor, L., Brkić, M., Polutnik, L., and Kapetanović, A. (2025)
 **"Comparative Analysis of Modern Machine Learning Models for Retail Sales Forecasting"**  
 *arXiv preprint*, arXiv:2506.05941, Jun. 2025.  
 **Full-text:** [https://arxiv.org/abs/2506.05941](https://arxiv.org/abs/2506.05941)
 
-An empirical assessment of global vs. local modeling strategies for retail sales forecasting. Evaluates tree-based algorithms (XGBoost, LightGBM) alongside deep learning architectures (N-BEATS, N-HiTS, TFT), noting that localized tree-based algorithms often outperform neural nets on irregular, sparse physical retail data.  
-**Relevance:** Validates the project's strategy to leverage tree-based global models over neural models for handling high-frequency sparse data and categorical hierarchy mapping (FR-05).
+Global vs local modeling strategies for retail sales. Evaluates XGBoost, LightGBM, N-BEATS, N-HiTS, TFT. Localized tree-based algorithms often outperform neural nets on irregular, sparse physical retail data.  
+**Relevance:** Validates tree-based global models over neural models for high-frequency sparse data and categorical hierarchy (FR-05).
 
 ---
 
@@ -241,8 +241,8 @@ An empirical assessment of global vs. local modeling strategies for retail sales
 *arXiv preprint*, arXiv:2506.05776, Jun. 2025.  
 **Full-text:** [https://arxiv.org/abs/2506.05776](https://arxiv.org/abs/2506.05776)
 
-Evaluates forecast stability across 10 global forecasting models using M5 and VN1 retail datasets under various retraining frequencies. Introduces SMQC (Scaled Multi-Quantile Change) metric for measuring probabilistic instability. Shows weekly retraining achieves the best accuracy-stability trade-off.  
-**Relevance:** Addresses the non-stationarity challenge of the Favorita dataset (2013–2017), including structural shifts like the 2016 earthquake. Informs Future Work on model maintenance (FR-09).
+Forecast stability across 10 global models using M5 and VN1 datasets under various retraining frequencies. SMQC (Scaled Multi-Quantile Change) metric for probabilistic instability. Weekly retraining = best accuracy-stability trade-off.  
+**Relevance:** Addresses Favorita non-stationarity (2013–2017), structural shifts like 2016 earthquake. Informs Future Work on model maintenance (FR-09).
 
 ---
 
@@ -251,8 +251,8 @@ Evaluates forecast stability across 10 global forecasting models using M5 and VN
 *arXiv preprint*, arXiv:2310.12809, Oct. 2023.  
 **Full-text:** [https://arxiv.org/abs/2310.12809](https://arxiv.org/abs/2310.12809)
 
-Proposes a method to learn coherent hierarchical forecasts with a single bottom-level model by optimising a loss function that considers the product hierarchy. Tested on the M5 Walmart dataset.  
-**Relevance:** Directly applicable to the Favorita dataset's natural hierarchy (store-family pairs → store totals → family totals → grand total). Addresses hierarchical reconciliation for FR-07 and Future Work.
+Single bottom-level model learns coherent hierarchical forecasts via loss function considering product hierarchy. Tested on M5 Walmart dataset.  
+**Relevance:** Directly applicable to Favorita hierarchy (store-family → store totals → family totals → grand total). Hierarchical reconciliation for FR-07 and Future Work.
 
 ---
 
@@ -262,8 +262,8 @@ Proposes a method to learn coherent hierarchical forecasts with a single bottom-
 **DOI:** [10.20944/preprints202502.0210.v1](https://doi.org/10.20944/preprints202502.0210.v1)  
 **Full-text:** [https://www.preprints.org/manuscript/202502.0210/v1](https://www.preprints.org/manuscript/202502.0210/v1) (open access)
 
-Explores probabilistic time series forecasting in retail environments employing Transformer-based deep learning models, particularly focusing on incorporating external explanatory variables like promotions and pricing alongside hyperparameter tuning with Optuna.  
-**Relevance:** Demonstrates the value of incorporating exogenous variables in Transformer models, directly relevant to modeling promotional logic with modern deep learning representations (FR-05).
+Transformer-based deep learning for probabilistic retail forecasting with external variables (promotions, pricing). Hyperparameter tuning with Optuna.  
+**Relevance:** Value of exogenous variables in Transformers; relevant to promotional logic with deep learning (FR-05).
 
 ---
 
@@ -274,8 +274,8 @@ Explores probabilistic time series forecasting in retail environments employing 
 *arXiv preprint*, arXiv:2501.12741, Jan. 2025.  
 **Full-text:** [https://arxiv.org/abs/2501.12741](https://arxiv.org/abs/2501.12741)
 
-Introduces AutoForecast, a fast and efficient meta-learning approach that automatically selects the best forecasting model for unseen time-series datasets without exhaustive training or cross-validation. Emphasizes maintaining data integrity during task selection.  
-**Relevance:** Supports the project's strategy to rapidly select appropriate forecasting models per product family without triggering data leakage through excessive testing iterations (Section 5.7, FR-06).
+AutoForecast: fast meta-learning approach selecting best forecasting model for unseen time-series without exhaustive training or cross-validation. Emphasizes data integrity during task selection.  
+**Relevance:** Rapid model selection per product family without data leakage through excessive testing (Section 5.7, FR-06).
 
 ---
 
@@ -285,8 +285,8 @@ Introduces AutoForecast, a fast and efficient meta-learning approach that automa
 **DOI:** [10.1016/j.mex.2024.103013](https://doi.org/10.1016/j.mex.2024.103013)  
 **Full-text:** [https://doi.org/10.1016/j.mex.2024.103013](https://doi.org/10.1016/j.mex.2024.103013) (open access)
 
-Proposes a robust repeated time-series cross-validation strategy explicitly crafted to prevent data leakage in sequential records. Shows that temporal cross-validation yields much safer estimates than traditional K-fold methods.  
-**Relevance:** Directly supports the project's requirement for rigorous `TimeSeriesSplit` methodologies and the strict prohibition of random shuffling during the validation process (Section 5.7, FR-06).
+Repeated time-series cross-validation preventing data leakage in sequential records. Temporal cross-validation yields safer estimates than K-fold.  
+**Relevance:** Supports rigorous `TimeSeriesSplit` methodologies and prohibition of random shuffling (Section 5.7, FR-06).
 
 ---
 
@@ -297,8 +297,8 @@ Proposes a robust repeated time-series cross-validation strategy explicitly craf
 *arXiv preprint*, arXiv:2304.11127, Apr. 2023.  
 **Full-text:** [https://arxiv.org/abs/2304.11127](https://arxiv.org/abs/2304.11127)
 
-In-depth theoretical analysis of the TPE (Tree-structured Parzen Estimator) algorithm that underpins Optuna's default sampler. Provides formal convergence guarantees and guidelines for configuring TPE-based hyperparameter search for tree models.  
-**Relevance:** Provides theoretical justification for using Optuna's TPE sampler for tuning XGBoost/LightGBM hyperparameters (FR-06).
+TPE (Tree-structured Parzen Estimator) algorithm underlying Optuna's default sampler. Formal convergence guarantees and guidelines for TPE-based hyperparameter search for tree models.  
+**Relevance:** Theoretical justification for Optuna's TPE sampler for XGBoost/LightGBM tuning (FR-06).
 
 ---
 
@@ -308,8 +308,8 @@ In-depth theoretical analysis of the TPE (Tree-structured Parzen Estimator) algo
 **DOI:** [10.9744/jti.28.1.1-12](https://doi.org/10.9744/jti.28.1.1-12)  
 **Full-text:** [https://jurnalindustri.petra.ac.id/index.php/ind/article/view/26476](https://jurnalindustri.petra.ac.id/index.php/ind/article/view/26476) (open access)
 
-Proposes an innovative hyperparameter configuration algorithm designed specifically to fine-tune XGBoost models in Fast-Moving Consumer Goods (FMCG) retail demand prediction environments, significantly decreasing prediction variability.  
-**Relevance:** Directly supports FR-06 by validating the necessity of deep hyperparameter optimization exclusively for robust XGBoost implementation within retail datasets.
+Hyperparameter configuration algorithm fine-tuning XGBoost for FMCG retail demand prediction. Significantly decreases prediction variability.  
+**Relevance:** Validates deep hyperparameter optimization necessity for robust XGBoost in retail datasets (FR-06).
 
 ---
 
@@ -321,8 +321,8 @@ Proposes an innovative hyperparameter configuration algorithm designed specifica
 **DOI:** [10.3934/QFE.2025024](https://doi.org/10.3934/QFE.2025024)  
 **Full-text:** [https://www.aimspress.com/article/doi/10.3934/QFE.2025024](https://www.aimspress.com/article/doi/10.3934/QFE.2025024) (open access)
 
-Explores retail transactional supermarket analytics to reveal patterns in consumer behavior tightly coupled with broader macroeconomic conditions. The study highlights robust machine learning pipelines connecting big data with economic health contexts at scale.  
-**Relevance:** Provides an absolute foundation for structurally integrating macroeconomic feature indicators (e.g. `dcoilwtico`) into supermarket forecasting algorithms precisely modeling consumer affordability shifts (FR-03).
+Retail transactional supermarket analytics revealing consumer behavior patterns coupled with macroeconomic conditions. ML pipelines connecting big data with economic health contexts at scale.  
+**Relevance:** Foundation for integrating macroeconomic indicators (`dcoilwtico`) into supermarket forecasting modeling consumer affordability shifts (FR-03).
 
 ---
 
@@ -332,8 +332,8 @@ Explores retail transactional supermarket analytics to reveal patterns in consum
 **DOI:** [10.3390/economies11120298](https://doi.org/10.3390/economies11120298)  
 **Full-text:** [https://www.mdpi.com/2227-7099/11/12/298](https://www.mdpi.com/2227-7099/11/12/298) (open access)
 
-Examines the relationship between oil revenue fluctuations and Ecuador's macroeconomic stability using VAR models. Documents how oil price volatility directly impacts government spending, employment, and ultimately consumer purchasing power.  
-**Relevance:** Strengthens the inclusion of oil price features (`dcoilwtico`) and provides Ecuador-specific evidence for the oil-retail nexus in the Favorita dataset (FR-03, Phase 4 EDA).
+Oil revenue fluctuations and Ecuador's macroeconomic stability via VAR models. Oil price volatility impacts government spending, employment, consumer purchasing power.  
+**Relevance:** Strengthens oil price feature (`dcoilwtico`) inclusion; Ecuador-specific evidence for oil-retail nexus in Favorita dataset (FR-03, Phase 4 EDA).
 
 ---
 
@@ -345,8 +345,8 @@ Examines the relationship between oil revenue fluctuations and Ecuador's macroec
 **DOI:** [10.1016/j.ijpe.2023.108833](https://doi.org/10.1016/j.ijpe.2023.108833)  
 **Full-text:** [https://arxiv.org/abs/2212.11970](https://arxiv.org/abs/2212.11970) (preprint)
 
-Empirical evaluation of probabilistic demand forecasting methods (quantile regression, distributional forecasts) on the M5 Walmart retail dataset. LightGBM quantile regression achieves strong coverage while maintaining sharp prediction intervals. RMSLE is confirmed as the preferred metric for retail forecasting with zero-inflated distributions.  
-**Relevance:** Validates the project's choice of RMSLE as primary metric and provides context for evaluating prediction uncertainty in retail forecasting (FR-07, Section 1.6).
+Probabilistic demand forecasting methods (quantile regression, distributional forecasts) on M5 Walmart retail dataset. LightGBM quantile regression achieves strong coverage while maintaining sharp prediction intervals. RMSLE = preferred metric for retail forecasting with zero-inflated distributions.  
+**Relevance:** Validates RMSLE as primary metric; context for evaluating prediction uncertainty in retail forecasting (FR-07, Section 1.6).
 
 ---
 
@@ -356,8 +356,8 @@ Empirical evaluation of probabilistic demand forecasting methods (quantile regre
 **DOI:** [10.1016/j.ijforecast.2021.10.008](https://doi.org/10.1016/j.ijforecast.2021.10.008)  
 **Full-text:** [https://doi.org/10.1016/j.ijforecast.2021.10.008](https://doi.org/10.1016/j.ijforecast.2021.10.008)
 
-Critical commentary on lessons learned from the M5 competition, including best practices for retail demand forecasting. Discusses the importance of proper evaluation metrics (RMSLE for zero-inflated data), temporal split validity, and the practical challenges of multi-store, multi-category forecasting.  
-**Relevance:** Provides competition-based insights directly applicable to the Favorita dataset's structure and the project's methodology (FR-05 through FR-09).
+Lessons from M5 competition: best practices for retail demand forecasting. Importance of proper evaluation metrics (RMSLE for zero-inflated data), temporal split validity, practical challenges of multi-store, multi-category forecasting.  
+**Relevance:** Competition insights directly applicable to Favorita dataset structure and project methodology (FR-05 through FR-09).
 
 ---
 
@@ -399,7 +399,7 @@ Critical commentary on lessons learned from the M5 competition, including best p
 
 [18] S. Punati et al., "Temporal fusion transformer for multi-horizon probabilistic forecasting of weekly retail sales," *arXiv preprint arXiv:2511.00552*, Nov. 2025.
 
-[19] L. Hobor, M. Brčić, L. Polutnik, and A. Kapetanović, "Comparative analysis of modern machine learning models for retail sales forecasting," *arXiv preprint arXiv:2506.05941*, Jun. 2025.
+[19] L. Hobor, M. Brkić, L. Polutnik, and A. Kapetanović, "Comparative analysis of modern machine learning models for retail sales forecasting," *arXiv preprint arXiv:2506.05941*, Jun. 2025.
 
 [20] M. Zanotti, "Analyzing the retraining frequency of global forecasting models: Towards more stable forecasting systems," *arXiv preprint arXiv:2506.05776*, Jun. 2025.
 
